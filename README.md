@@ -13,7 +13,7 @@ the `==UserScript==` header and prompts to install.
 | Script                       | Install                                                                                         | Description                                                                                                               |
 | ---------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `gitlab-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/gitlab-mark-viewed.user.js) | Press `v` on a GitLab MR diff to toggle the focused file's "Viewed" checkbox. Matches `gitlab.com` and `git.vs-point.cz`. |
-| `github-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/github-mark-viewed.user.js) | Press `v` on a GitHub PR "Files changed" page to toggle the focused file's "Viewed" button.                               |
+| `github-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/github-mark-viewed.user.js) | Press `v` on a GitHub PR diff page (`/files` or `/changes`) to toggle the focused file's "Viewed" button.                 |
 
 ## Authoring
 
