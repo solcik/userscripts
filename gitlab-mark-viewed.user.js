@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         GitLab — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.2.1
+// @version      0.2.2
 // @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox.
 // @author       David Solc
-// @match        https://gitlab.com/*/-/merge_requests/*/diffs
-// @match        https://git.vs-point.cz/*/-/merge_requests/*/diffs
+// @match        https://gitlab.com/*/-/merge_requests/*
+// @match        https://git.vs-point.cz/*/-/merge_requests/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gitlab.com
 // @homepageURL  https://github.com/solcik/userscripts
 // @supportURL   https://github.com/solcik/userscripts/issues

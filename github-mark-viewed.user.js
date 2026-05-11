@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         GitHub — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.2.0
+// @version      0.2.1
 // @description  In a GitHub pull request diff view, press "v" to toggle the focused file's "Viewed" button.
 // @author       David Solc
-// @match        https://github.com/*/*/pull/*/files*
-// @match        https://github.com/*/*/pull/*/changes*
+// @match        https://github.com/*/*/pull/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @homepageURL  https://github.com/solcik/userscripts
 // @supportURL   https://github.com/solcik/userscripts/issues
