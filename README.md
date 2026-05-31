@@ -10,10 +10,11 @@ Violentmonkey auto-updates from `main` on its own.
 Open a script's raw URL in Firefox with Violentmonkey installed — it detects
 the `==UserScript==` header and prompts to install.
 
-| Script                       | Install                                                                                         | Description                                                                                                                                        |
-| ---------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `gitlab-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/gitlab-mark-viewed.user.js) | Press `v` on a GitLab MR page to toggle the focused file's "Viewed" checkbox when the diff is visible. Matches `gitlab.com` and `git.vs-point.cz`. |
-| `github-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/github-mark-viewed.user.js) | Press `v` on a GitHub PR page to toggle the focused file's "Viewed" button when the diff is visible.                                               |
+| Script                       | Install                                                                                         | Description                                                                                                                                                                                                       |
+| ---------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gitlab-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/gitlab-mark-viewed.user.js) | Press `v` on a GitLab MR page to toggle the focused file's "Viewed" checkbox when the diff is visible. Matches `gitlab.com` and `git.vs-point.cz`.                                                                |
+| `gitlab-commit-nav.user.js`  | [install](https://raw.githubusercontent.com/solcik/userscripts/main/gitlab-commit-nav.user.js)  | Press `x` / `c` on a GitLab MR single-commit diff to go to the previous / next commit. Restores the built-in shortcut broken on GitLab < 17.10 ([#499143](https://gitlab.com/gitlab-org/gitlab/-/issues/499143)). |
+| `github-mark-viewed.user.js` | [install](https://raw.githubusercontent.com/solcik/userscripts/main/github-mark-viewed.user.js) | Press `v` on a GitHub PR page to toggle the focused file's "Viewed" button when the diff is visible.                                                                                                              |
 
 ## Authoring
 
