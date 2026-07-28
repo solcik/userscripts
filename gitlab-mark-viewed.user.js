@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GitLab — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.3.0
-// @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox and advance to the next file.
+// @version      0.4.0
+// @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox, advancing to the next file only when marking one viewed.
 // @author       David Solc
 // @match        https://gitlab.com/*/-/merge_requests/*
 // @match        https://git.vs-point.cz/*/-/merge_requests/*
@@ -73,7 +73,11 @@
     const checkbox = file && file.querySelector(REVIEW_CHECKBOX);
     if (!checkbox) return;
 
+    // Un-reviewing expands the file again, which is the whole point of pressing
+    // "v" on an already-viewed file — stay put so it can actually be read.
+    const marking = !checkbox.checked;
+
     checkbox.click();
-    requestAnimationFrame(goToNextFile);
+    if (marking) requestAnimationFrame(goToNextFile);
   });
 })();
