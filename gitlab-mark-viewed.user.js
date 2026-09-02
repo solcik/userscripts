@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GitLab — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.4.0
-// @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox, advancing to the next file only when marking one viewed.
+// @version      0.5.0
+// @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox, advancing to the next file — pinned under the sticky header — only when marking one viewed.
 // @author       David Solc
 // @match        https://gitlab.com/*/-/merge_requests/*
 // @match        https://git.vs-point.cz/*/-/merge_requests/*
@@ -25,6 +25,7 @@
   const REVIEW_CHECKBOX = "[data-testid='fileReviewCheckbox']";
   const NEXT_FILE_KEY = 'j';
   const EDGE = 4;
+  const SETTLE_MS = 400;
 
   function topChrome() {
     let bottom = 0;
@@ -68,6 +69,30 @@
     document.body.dispatchEvent(event);
   }
 
+  function fileKey(file) {
+    return file ? file.id || file.dataset.path || '' : '';
+  }
+
+  // In "show one file at a time" mode GitLab swaps the diff in place and leaves
+  // the viewport where it was, so a long commit message sits above the file we
+  // just moved to. The swap also takes a few frames, and the file grows as its
+  // lines render, so re-pin the new file under the sticky header until the
+  // layout settles. A key that never changes means there was no next file.
+  function pinNextFile(previousKey) {
+    const started = performance.now();
+
+    (function pin() {
+      const file = focusedFile();
+      if (file && fileKey(file) !== previousKey) {
+        const top = window.scrollY + file.getBoundingClientRect().top - topChrome();
+        if (Math.abs(top - window.scrollY) > 1) {
+          window.scrollTo({ top: Math.max(top, 0), left: window.scrollX });
+        }
+      }
+      if (performance.now() - started < SETTLE_MS) requestAnimationFrame(pin);
+    })();
+  }
+
   Mousetrap.bind('v', function () {
     const file = focusedFile();
     const checkbox = file && file.querySelector(REVIEW_CHECKBOX);
@@ -78,6 +103,12 @@
     const marking = !checkbox.checked;
 
     checkbox.click();
-    if (marking) requestAnimationFrame(goToNextFile);
+    if (!marking) return;
+
+    const key = fileKey(file);
+    requestAnimationFrame(function () {
+      goToNextFile();
+      pinNextFile(key);
+    });
   });
 })();
