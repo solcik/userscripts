@@ -2,7 +2,7 @@
   description = "Userscripts dev environment (bun + oxc)";
 
   inputs = {
-    unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    unstable.url = "github:NixOS/nixpkgs/20b1ddd1aa5ace70c9468305030aa4f9ef79671b";
     systems.url = "github:nix-systems/default";
     flake-utils = {
       url = "github:numtide/flake-utils";
