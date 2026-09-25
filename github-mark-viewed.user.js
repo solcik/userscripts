@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.6.0
+// @version      0.6.1
 // @description  In a GitHub pull request diff view: "v" marks the focused file viewed and moves on, "j"/"k" go to the next/previous file, "u" un-marks the last file "v" marked, and "V" shows or hides viewed files. The first "v" on a pull request only hides viewed files.
 // @author       David Solc
 // @match        https://github.com/*/*/pull/*
@@ -38,6 +38,7 @@
   const WAIT_MS = 1500;
 
   const UNDO_KEY = 'github-mark-viewed:undo:';
+  const CURSOR_ATTR = 'data-mark-viewed-cursor';
 
   // ---- Page model: files, focus, scrolling -------------------------------
 
@@ -59,8 +60,42 @@
     return bottom;
   }
 
-  // The file being read is the topmost one still visible below the page header.
+  // ---- Cursor ---------------------------------------------------------------
+
+  // Near the end of the page the browser cannot scroll a file up under the
+  // header, so the scroll position alone cannot say which file a key moved to.
+  // The keys therefore keep an explicit cursor and outline that file.
+  let cursorId = null;
+
+  const style = document.createElement('style');
+  style.textContent = `[${CURSOR_ATTR}] {
+    outline: 2px solid var(--fgColor-accent, #0969da);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }`;
+  document.head.append(style);
+
+  function setCursor(id) {
+    for (const el of document.querySelectorAll(`[${CURSOR_ATTR}]`)) {
+      if (el.id !== id) el.removeAttribute(CURSOR_ATTR);
+    }
+    cursorId = id;
+    const file = id && document.getElementById(id);
+    if (file && !file.hasAttribute(CURSOR_ATTR)) file.setAttribute(CURSOR_ATTR, '');
+  }
+
+  function onScreen(file) {
+    const rect = file.getBoundingClientRect();
+    return rect.bottom > topChrome() && rect.top < window.innerHeight;
+  }
+
+  // The file being read is the cursor file while it is on screen. Otherwise,
+  // for example after scrolling with the mouse, it is the topmost file still
+  // visible below the page header.
   function focusedIndex(files) {
+    const cursor = cursorId ? files.findIndex((file) => file.id === cursorId) : -1;
+    if (cursor >= 0 && onScreen(files[cursor])) return cursor;
+
     if (files.length < 2) return files.length - 1;
 
     const edge = topChrome() + EDGE;
@@ -87,6 +122,8 @@
       if (token !== pinToken) return;
       const file = document.getElementById(id);
       if (file) {
+        // React can re-create the element while the layout settles.
+        setCursor(id);
         const top = window.scrollY + file.getBoundingClientRect().top - topChrome();
         if (Math.abs(top - window.scrollY) > 1) window.scrollTo({ top, left: window.scrollX });
       }
@@ -192,7 +229,10 @@
     const marking = !isViewed(file);
 
     button.click();
-    if (!marking) return;
+    if (!marking) {
+      setCursor(file.id);
+      return;
+    }
 
     saveUndo([...loadUndo().filter((id) => id !== file.id), file.id]);
 
