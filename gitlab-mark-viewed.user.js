@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitLab — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.5.0
+// @version      0.5.1
 // @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox, advancing to the next file — pinned under the sticky header — only when marking one viewed.
 // @author       David Solc
 // @match        https://gitlab.com/*/-/merge_requests/*
@@ -38,6 +38,18 @@
     }
 
     return bottom;
+  }
+
+  // The file's own filename header is sticky too and sticks below the merge
+  // request header, usually lower than the point topChrome() probes. Pin to
+  // its real `top` so it does not cover the first rows of the diff.
+  function fileStickyTop(file) {
+    for (const el of file.querySelectorAll('*')) {
+      const style = getComputedStyle(el);
+      if (style.position === 'sticky') return parseFloat(style.top) || 0;
+    }
+
+    return 0;
   }
 
   // In "show one file at a time" mode there is only ever one file in the DOM;
@@ -84,7 +96,10 @@
     (function pin() {
       const file = focusedFile();
       if (file && fileKey(file) !== previousKey) {
-        const top = window.scrollY + file.getBoundingClientRect().top - topChrome();
+        const top =
+          window.scrollY +
+          file.getBoundingClientRect().top -
+          Math.max(topChrome(), fileStickyTop(file));
         if (Math.abs(top - window.scrollY) > 1) {
           window.scrollTo({ top: Math.max(top, 0), left: window.scrollX });
         }
