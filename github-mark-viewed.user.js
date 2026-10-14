@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.6.1
+// @version      0.6.2
 // @description  In a GitHub pull request diff view: "v" marks the focused file viewed and moves on, "j"/"k" go to the next/previous file, "u" un-marks the last file "v" marked, and "V" shows or hides viewed files. The first "v" on a pull request only hides viewed files.
 // @author       David Solc
 // @match        https://github.com/*/*/pull/*
@@ -18,7 +18,8 @@
 (function () {
   'use strict';
 
-  const VIEWED_BUTTON = 'button[class*="MarkAsViewedButton-module"]';
+  const VIEWED_BUTTON =
+    'button[aria-pressed][aria-label="Not Viewed"], button[aria-pressed][aria-label="Viewed"]';
 
   // Both the React diff view and the older server-rendered one give every file a
   // "diff-<sha>" id; the wrapper element around it differs between them. The sha
