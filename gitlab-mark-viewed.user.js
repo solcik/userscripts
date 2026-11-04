@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GitLab — mark file as Viewed with "v"
 // @namespace    https://github.com/solcik/userscripts
-// @version      0.5.1
-// @description  In a GitLab merge request diff, press "v" to toggle the focused file's "Viewed" checkbox, advancing to the next file — pinned under the sticky header — only when marking one viewed.
+// @version      0.5.2
+// @description  In a GitLab merge request diff, press "v" (GitLab toggles the focused file's "Viewed" checkbox) and advance to the next file — pinned under the sticky header — only when marking one viewed.
 // @author       David Solc
 // @match        https://gitlab.com/*/-/merge_requests/*
 // @match        https://git.vs-point.cz/*/-/merge_requests/*
@@ -21,8 +21,8 @@
 (function () {
   'use strict';
 
-  const FILE = '.diff-file.file-holder';
-  const REVIEW_CHECKBOX = "[data-testid='fileReviewCheckbox']";
+  const FILE = 'diff-file, .diff-file.file-holder';
+  const REVIEW_CHECKBOX = "[data-testid='fileReviewCheckbox'], input[data-viewed-checkbox]";
   const NEXT_FILE_KEY = 'j';
   const EDGE = 4;
   const SETTLE_MS = 400;
@@ -108,22 +108,22 @@
     })();
   }
 
+  // GitLab now binds "v" ("Viewed by me") itself. Clicking the checkbox here
+  // too would toggle it twice, so let GitLab toggle and only watch the result.
   Mousetrap.bind('v', function () {
     const file = focusedFile();
     const checkbox = file && file.querySelector(REVIEW_CHECKBOX);
     if (!checkbox) return;
 
-    // Un-reviewing expands the file again, which is the whole point of pressing
-    // "v" on an already-viewed file — stay put so it can actually be read.
-    const marking = !checkbox.checked;
-
-    checkbox.click();
-    if (!marking) return;
-
+    const was = checkbox.checked;
     const key = fileKey(file);
-    requestAnimationFrame(function () {
+
+    setTimeout(function () {
+      // Un-reviewing expands the file again, which is the whole point of
+      // pressing "v" on an already-viewed file — stay put so it can be read.
+      if (was || !checkbox.checked) return;
       goToNextFile();
       pinNextFile(key);
-    });
+    }, 50);
   });
 })();
